@@ -15,6 +15,7 @@ import PropertyVisitors from "./pages/PropertyVisitors";
 import LeadsEnquiries from "./pages/LeadsEnquiries";
 import PostProperty from "./pages/PostProperty";
 import Services from "./pages/Services";
+import PropertyDetails from "./pages/PropertyDetails";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               <Route path="/leads-enquiries" element={<LeadsEnquiries />} />
               <Route path="/post-property" element={<PostProperty />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/properties/:id" element={<PropertyDetails />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
