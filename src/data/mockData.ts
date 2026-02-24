@@ -42,6 +42,21 @@ export interface Visitor {
   date: string;
   propertyId: string;
   propertyTitle: string;
+  source: string;
+  contact?: string;
+}
+
+export interface Transaction {
+  id: string;
+  date: string;
+  amount: number;
+  coinAmount: number;
+  type: "Credit" | "Debit";
+  status: "Success" | "Pending" | "Failed";
+  method: string;
+  service: string;
+  relatedPropertyId?: string;
+  relatedPropertyTitle?: string;
 }
 
 export interface DashboardStats {
@@ -364,14 +379,85 @@ export const leadsAndEnquiries: Lead[] = [
 ];
 
 export const propertyVisitors: Visitor[] = [
-  { id: "v1", name: "Priya Sharma", date: "2026-02-23", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West" },
-  { id: "v2", name: "Amit Patel", date: "2026-02-22", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West" },
-  { id: "v3", name: "Sneha Reddy", date: "2026-02-21", propertyId: "p3", propertyTitle: "Commercial Office Space in BKC" },
-  { id: "v4", name: "Vikram Singh", date: "2026-02-20", propertyId: "p5", propertyTitle: "Farmhouse Plot in Karjat" },
-  { id: "v5", name: "Kavitha Nair", date: "2026-02-19", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West" },
-  { id: "v6", name: "Arjun Mehta", date: "2026-02-18", propertyId: "p7", propertyTitle: "Studio Apartment in Hinjewadi" },
-  { id: "v7", name: "Deepa Iyer", date: "2026-02-17", propertyId: "p4", propertyTitle: "2BHK Flat in Andheri East" },
-  { id: "v8", name: "Ravi Kumar", date: "2026-02-16", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West" },
+  { id: "v1", name: "Priya Sharma", date: "2026-02-23", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West", source: "Direct Search", contact: "+91 99887 76655" },
+  { id: "v2", name: "Amit Patel", date: "2026-02-22", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West", source: "Featured Listing", contact: "+91 88776 55443" },
+  { id: "v3", name: "Sneha Reddy", date: "2026-02-21", propertyId: "p3", propertyTitle: "Commercial Office Space in BKC", source: "Google Search" },
+  { id: "v4", name: "Vikram Singh", date: "2026-02-20", propertyId: "p5", propertyTitle: "Farmhouse Plot in Karjat", source: "Referral", contact: "+91 66554 33221" },
+  { id: "v5", name: "Kavitha Nair", date: "2026-02-19", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West", source: "Social Media" },
+  { id: "v6", name: "Arjun Mehta", date: "2026-02-18", propertyId: "p7", propertyTitle: "Studio Apartment in Hinjewadi", source: "Direct Search", contact: "+91 44332 11009" },
+  { id: "v7", name: "Deepa Iyer", date: "2026-02-17", propertyId: "p4", propertyTitle: "2BHK Flat in Andheri East", source: "Google Search" },
+  { id: "v8", name: "Ravi Kumar", date: "2026-02-16", propertyId: "p1", propertyTitle: "Luxury 3BHK Apartment in Bandra West", source: "Featured Listing", contact: "+91 22110 99887" },
+];
+
+export const transactions: Transaction[] = [
+  {
+    id: "t1",
+    date: "2026-02-22",
+    amount: 999,
+    coinAmount: 50,
+    type: "Debit",
+    status: "Success",
+    method: "UPI",
+    service: "Property Validation",
+    relatedPropertyId: "p1",
+    relatedPropertyTitle: "Luxury 3BHK Apartment in Bandra West",
+  },
+  {
+    id: "t2",
+    date: "2026-02-20",
+    amount: 0,
+    coinAmount: 100,
+    type: "Credit",
+    status: "Success",
+    method: "Reward",
+    service: "Referral Bonus",
+  },
+  {
+    id: "t3",
+    date: "2026-02-18",
+    amount: 499,
+    coinAmount: 25,
+    type: "Debit",
+    status: "Success",
+    method: "Net Banking",
+    service: "Legal Opinion",
+    relatedPropertyId: "p3",
+    relatedPropertyTitle: "Commercial Office Space in BKC",
+  },
+  {
+    id: "t4",
+    date: "2026-02-15",
+    amount: 0,
+    coinAmount: 50,
+    type: "Credit",
+    status: "Success",
+    method: "Reward",
+    service: "Property Listing Bonus",
+    relatedPropertyId: "p5",
+    relatedPropertyTitle: "Farmhouse Plot in Karjat",
+  },
+  {
+    id: "t5",
+    date: "2026-02-14",
+    amount: 1499,
+    coinAmount: 75,
+    type: "Debit",
+    status: "Pending",
+    method: "Credit Card",
+    service: "Priority Listing",
+    relatedPropertyId: "p7",
+    relatedPropertyTitle: "Studio Apartment in Hinjewadi",
+  },
+  {
+    id: "t6",
+    date: "2026-02-10",
+    amount: 0,
+    coinAmount: 25,
+    type: "Credit",
+    status: "Success",
+    method: "Reward",
+    service: "Profile Completion Bonus",
+  },
 ];
 
 export const cities = ["Mumbai", "Bangalore", "Pune", "Delhi", "Hyderabad", "Chennai"];

@@ -62,13 +62,13 @@ const Dashboard = () => {
           title="Transactions"
           value={dashboardStats.transactionCount}
           icon={Receipt}
-          link="#"
+          link="/transactions"
         />
         <StatCard
           title="My Coins"
           value={dashboardStats.coins}
           icon={Coins}
-          link="#"
+          link="/my-coins"
         />
       </div>
     </div>

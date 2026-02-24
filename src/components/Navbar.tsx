@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { cities } from "@/data/mockData";
+import logo from "@/assets/realrupee_logo_light.webp";
 import {
   ChevronDown,
   LogOut,
@@ -59,8 +60,8 @@ const Navbar = () => {
       <nav className="sticky top-0 z-50 border-b bg-card shadow-sm">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-6">
-            <Link to="/" className="text-xl font-bold text-primary">
-              RealRupee
+            <Link to="/" className="shrink-0">
+              <img src={logo} alt="RealRupee" className="h-10 w-auto object-contain" />
             </Link>
 
             {/* City Selector - Desktop */}

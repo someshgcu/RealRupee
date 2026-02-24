@@ -12,10 +12,18 @@ import Dashboard from "./pages/Dashboard";
 import MyProperties from "./pages/MyProperties";
 import MyShortlist from "./pages/MyShortlist";
 import PropertyVisitors from "./pages/PropertyVisitors";
+import PropertyVisitorDetails from "./pages/PropertyVisitorDetails";
 import LeadsEnquiries from "./pages/LeadsEnquiries";
+import LeadDetails from "./pages/LeadDetails";
 import PostProperty from "./pages/PostProperty";
 import Services from "./pages/Services";
 import PropertyDetails from "./pages/PropertyDetails";
+import Transactions from "./pages/Transactions";
+import TransactionDetails from "./pages/TransactionDetails";
+import MyCoins from "./pages/MyCoins";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
+import Disclaimer from "./pages/Disclaimer";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,10 +44,18 @@ const App = () => (
               <Route path="/my-properties" element={<MyProperties />} />
               <Route path="/my-shortlist" element={<MyShortlist />} />
               <Route path="/property-visitors" element={<PropertyVisitors />} />
+              <Route path="/property-visitors/:id" element={<PropertyVisitorDetails />} />
               <Route path="/leads-enquiries" element={<LeadsEnquiries />} />
+              <Route path="/leads-enquiries/:id" element={<LeadDetails />} />
               <Route path="/post-property" element={<PostProperty />} />
               <Route path="/services" element={<Services />} />
               <Route path="/properties/:id" element={<PropertyDetails />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/transactions/:id" element={<TransactionDetails />} />
+              <Route path="/my-coins" element={<MyCoins />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<TermsConditions />} />
+              <Route path="/disclaimer" element={<Disclaimer />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
@@ -50,3 +66,4 @@ const App = () => (
 );
 
 export default App;
+

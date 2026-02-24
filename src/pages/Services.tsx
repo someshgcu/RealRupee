@@ -9,17 +9,17 @@ interface ServiceInfo {
 
 const services: ServiceInfo[] = [
   {
-    name: "Auction",
-    price: "₹4999",
-    description:
-      "RealRupee Online Auctions offers a transparent, high-visibility platform for property auctions, significantly increasing lead generation. Free participation for registered users, making it accessible and risk-free. No immediate exchange of contracts allows time for the final decision, protecting both buyers and sellers. Ideal for bankers to auction foreclosure properties and attract buyers profitably.",
-    linkText: "Learn More...",
-  },
-  {
     name: "Property Validation",
     price: "₹999",
     description:
       "RealRupee's property validation ensures legality, while safeguarding buyers interests. Property validation ensures properties are free from litigations, confirms lawful ownership. Documents are validated by seasoned legal advocates to streamline the buying process for quicker transactions and easy loan approvals. Legally validated properties get higher visibility on the website, enhancing marketability",
+    linkText: "Learn More...",
+  },
+  {
+    name: "Auction",
+    price: "₹4999",
+    description:
+      "RealRupee Online Auctions offers a transparent, high-visibility platform for property auctions, significantly increasing lead generation. Free participation for registered users, making it accessible and risk-free. No immediate exchange of contracts allows time for the final decision, protecting both buyers and sellers. Ideal for bankers to auction foreclosure properties and attract buyers profitably.",
     linkText: "Learn More...",
   },
   {
