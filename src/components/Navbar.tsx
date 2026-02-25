@@ -15,6 +15,7 @@ import {
   X,
   Settings,
   Briefcase,
+  Search,
 } from "lucide-react";
 
 const Navbar = () => {
@@ -26,6 +27,7 @@ const Navbar = () => {
   const [avatarOpen, setAvatarOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSignoutConfirm, setShowSignoutConfirm] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const avatarRef = useRef<HTMLDivElement>(null);
   const cityRef = useRef<HTMLDivElement>(null);
 
@@ -44,6 +46,15 @@ const Navbar = () => {
     setMobileMenuOpen(false);
   }, [location.pathname]);
 
+  // Sticky search on scroll
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 300);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   const handleSignout = () => {
     setShowSignoutConfirm(true);
     setAvatarOpen(false);
@@ -55,10 +66,15 @@ const Navbar = () => {
     navigate("/");
   };
 
+  const isHomePage = location.pathname === "/";
+  const showStickySearch = scrolled && isHomePage;
+
   return (
     <>
-      <nav className="sticky top-0 z-50 border-b bg-card shadow-sm">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <nav
+        className={`sticky top-0 z-50 border-b bg-card transition-shadow duration-300 ${showStickySearch ? "shadow-md" : "shadow-sm"}`}
+      >
+        <div className="container mx-auto flex h-16 items-center justify-between gap-4 px-4">
           <div className="flex items-center gap-6">
             <Link to="/" className="shrink-0">
               <img src={logo} alt="RealRupee" className="h-10 w-auto object-contain" />
@@ -89,6 +105,23 @@ const Navbar = () => {
                   ))}
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Compact Sticky Search Bar */}
+          <div
+            className={`hidden flex-1 items-center transition-all duration-300 md:flex ${showStickySearch ? "max-w-md opacity-100" : "max-w-0 opacity-0 overflow-hidden"}`}
+          >
+            <div className="flex w-full items-center rounded-lg border bg-muted/50">
+              <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search location, project..."
+                className="flex-1 border-0 bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+              />
+              <button className="mr-1 rounded-md bg-accent px-4 py-1.5 text-xs font-medium text-accent-foreground transition-colors hover:opacity-90">
+                Search
+              </button>
             </div>
           </div>
 
@@ -200,6 +233,17 @@ const Navbar = () => {
         {/* Mobile dropdown */}
         {mobileMenuOpen && (
           <div className="border-t bg-card px-4 py-4 md:hidden">
+            {/* Mobile sticky search */}
+            {showStickySearch && (
+              <div className="mb-3 flex items-center rounded-lg border bg-muted/50">
+                <Search className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search location, project..."
+                  className="flex-1 border-0 bg-transparent px-3 py-2 text-sm text-foreground outline-none placeholder:text-muted-foreground"
+                />
+              </div>
+            )}
             <div className="mb-3">
               <select
                 value={selectedCity}

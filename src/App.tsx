@@ -17,6 +17,7 @@ import LeadsEnquiries from "./pages/LeadsEnquiries";
 import LeadDetails from "./pages/LeadDetails";
 import PostProperty from "./pages/PostProperty";
 import Services from "./pages/Services";
+import Properties from "./pages/Properties";
 import PropertyDetails from "./pages/PropertyDetails";
 import Transactions from "./pages/Transactions";
 import TransactionDetails from "./pages/TransactionDetails";
@@ -49,6 +50,7 @@ const App = () => (
               <Route path="/leads-enquiries/:id" element={<LeadDetails />} />
               <Route path="/post-property" element={<PostProperty />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/properties" element={<Properties />} />
               <Route path="/properties/:id" element={<PropertyDetails />} />
               <Route path="/transactions" element={<Transactions />} />
               <Route path="/transactions/:id" element={<TransactionDetails />} />

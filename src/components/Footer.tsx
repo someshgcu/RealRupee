@@ -48,32 +48,32 @@ const Footer = () => {
                         </h3>
                         <ul className="space-y-2.5">
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Residential&subType=Apartments" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Apartment
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Residential&subType=Villas" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Villa
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Residential&subType=Independent+House" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Independent House
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Commercial" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Commercial
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Agricultural" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Agricultural
                                 </Link>
                             </li>
                             <li>
-                                <Link to="#" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
+                                <Link to="/properties?type=Development" className="text-sm text-gray-300 transition-colors hover:text-blue-200">
                                     Development
                                 </Link>
                             </li>
