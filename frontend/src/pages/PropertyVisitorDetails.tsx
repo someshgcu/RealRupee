@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { propertyVisitors, properties } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 import {
     ArrowLeft,
     User,
@@ -9,12 +12,53 @@ import {
     Building2,
     MapPin,
     ExternalLink,
+    Loader2,
 } from "lucide-react";
 
 const PropertyVisitorDetails = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const visitor = propertyVisitors.find((v) => v.id === id);
+    const { toast } = useToast();
+    const [visitor, setVisitor] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchVisitorDetails = async () => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from("property_visitors")
+                    .select(`
+                        *,
+                        properties (
+                            *,
+                            property_images (image_url)
+                        )
+                    `)
+                    .eq("id", id)
+                    .single();
+
+                if (error) throw error;
+                setVisitor(data);
+            } catch (error: any) {
+                console.error("Fetch visitor error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchVisitorDetails();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!visitor) {
         return (
@@ -36,7 +80,7 @@ const PropertyVisitorDetails = () => {
         );
     }
 
-    const property = properties.find((p) => p.id === visitor.propertyId);
+    const property = visitor.properties;
 
     return (
         <div className="container mx-auto px-4 py-6">
@@ -76,7 +120,9 @@ const PropertyVisitorDetails = () => {
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                             <div>
                                 <p className="text-xs text-muted-foreground">Date Visited</p>
-                                <p className="text-sm font-medium text-foreground">{visitor.date}</p>
+                                <p className="text-sm font-medium text-foreground">
+                                    {format(new Date(visitor.visited_at), "dd MMM yyyy, HH:mm")}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 rounded-lg bg-muted/50 p-3">
@@ -99,7 +145,7 @@ const PropertyVisitorDetails = () => {
                             Property Viewed
                         </h3>
                         <img
-                            src={property.imageUrl}
+                            src={property.property_images?.[0]?.image_url || "/placeholder.svg"}
                             alt={property.title}
                             className="mb-4 h-40 w-full rounded-lg object-cover"
                         />

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, X, ShieldCheck, Users, Gavel, Info } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 
 interface ServiceInfo {
   name: string;
@@ -93,6 +94,7 @@ const Services = () => {
 
   return (
     <div className="container mx-auto px-4 py-12">
+      <BackButton />
       {/* Dismissible Banner */}
       {showBanner && (
         <div className="relative mb-8 flex items-start gap-3 rounded-xl border border-blue-200 bg-blue-50 px-5 py-4">

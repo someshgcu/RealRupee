@@ -109,6 +109,7 @@ export type Database = {
             }
             profiles: {
                 Row: {
+                    account_status: string | null
                     avatar_url: string | null
                     coins_balance: number | null
                     created_at: string | null
@@ -118,10 +119,12 @@ export type Database = {
                     phone_number: string | null
                     referral_code: string | null
                     referred_by: string | null
+                    roles: string[] | null
                     updated_at: string | null
                     whatsapp_number: string | null
                 }
                 Insert: {
+                    account_status?: string | null
                     avatar_url?: string | null
                     coins_balance?: number | null
                     created_at?: string | null
@@ -131,10 +134,12 @@ export type Database = {
                     phone_number?: string | null
                     referral_code?: string | null
                     referred_by?: string | null
+                    roles?: string[] | null
                     updated_at?: string | null
                     whatsapp_number?: string | null
                 }
                 Update: {
+                    account_status?: string | null
                     avatar_url?: string | null
                     coins_balance?: number | null
                     created_at?: string | null
@@ -144,6 +149,7 @@ export type Database = {
                     phone_number?: string | null
                     referral_code?: string | null
                     referred_by?: string | null
+                    roles?: string[] | null
                     updated_at?: string | null
                     whatsapp_number?: string | null
                 }
@@ -252,9 +258,9 @@ export type Database = {
                     bedrooms?: number | null
                     car_parking?: number | null
                     city?: string
-                    contact_email_1?: string
+                    contact_email_1: string
                     contact_email_2?: string | null
-                    contact_phone_1?: string
+                    contact_phone_1: string
                     contact_phone_2?: string | null
                     contact_whatsapp?: string | null
                     cost_per_unit?: number | null

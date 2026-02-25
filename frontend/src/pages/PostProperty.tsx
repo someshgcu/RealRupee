@@ -50,6 +50,7 @@ import {
   Cctv,
   Baby,
 } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 
 // Map amenities to lucide-react icons
 const amenityIconMap: Record<string, React.ElementType> = {
@@ -185,6 +186,7 @@ const PostProperty = () => {
 
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
+      <BackButton />
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-2xl font-bold text-foreground">Post Property</h1>
@@ -199,10 +201,10 @@ const PostProperty = () => {
           <div key={s} className="flex flex-1 items-center gap-2">
             <div
               className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-medium ${i < step
-                  ? "bg-green-500 text-white"
-                  : i === step
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                ? "bg-green-500 text-white"
+                : i === step
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
                 }`}
             >
               {i < step ? <Check className="h-4 w-4" /> : i + 1}
@@ -409,8 +411,8 @@ const PostProperty = () => {
                     type="button"
                     onClick={() => toggleAmenity(a)}
                     className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-colors ${form.amenities.includes(a)
-                        ? "border-primary bg-primary/10 text-primary"
-                        : "bg-card text-muted-foreground hover:bg-muted"
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "bg-card text-muted-foreground hover:bg-muted"
                       }`}
                   >
                     <IconComp className="h-3.5 w-3.5" />
@@ -641,8 +643,8 @@ const PostProperty = () => {
                     <button
                       onClick={() => toggleDocVisibility(i)}
                       className={`rounded-md p-1.5 text-sm transition-colors ${doc.visible
-                          ? "bg-green-50 text-green-600 hover:bg-green-100"
-                          : "bg-red-50 text-red-500 hover:bg-red-100"
+                        ? "bg-green-50 text-green-600 hover:bg-green-100"
+                        : "bg-red-50 text-red-500 hover:bg-red-100"
                         }`}
                       title={doc.visible ? "Visibility ON" : "Visibility OFF"}
                     >

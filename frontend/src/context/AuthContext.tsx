@@ -29,6 +29,9 @@ interface AuthContextType {
   isLoading: boolean;
   // Auth actions
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
+  signInWithOtp: (emailOrPhone: string, type: "email" | "phone") => Promise<{ error: AuthError | null }>;
+  verifyOtp: (emailOrPhone: string, token: string, type: "email" | "sms", fullName?: string) => Promise<{ error: AuthError | null }>;
+  signInWithGoogle: () => Promise<{ error: AuthError | null }>;
   signUp: (opts: SignUpOptions) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   /** Refresh the profile from the DB (useful after profile edits) */
@@ -44,6 +47,9 @@ const AuthContext = createContext<AuthContextType>({
   isLoggedIn: false,
   isLoading: true,
   signIn: async () => ({ error: null }),
+  signInWithOtp: async () => ({ error: null }),
+  verifyOtp: async () => ({ error: null }),
+  signInWithGoogle: async () => ({ error: null }),
   signUp: async () => ({ error: null }),
   signOut: async () => { },
   refreshProfile: async () => { },
@@ -121,6 +127,57 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     [fetchProfile]
   );
 
+  // ── Sign In with OTP ───────────────────────────────────────────────────────
+  const signInWithOtp = useCallback(
+    async (emailOrPhone: string, type: "email" | "phone") => {
+      const { error } = await supabase.auth.signInWithOtp(
+        type === "email"
+          ? { email: emailOrPhone }
+          : { phone: emailOrPhone }
+      );
+      return { error };
+    },
+    []
+  );
+
+  // ── Verify OTP ─────────────────────────────────────────────────────────────
+  const verifyOtp = useCallback(
+    async (emailOrPhone: string, token: string, type: "email" | "sms", fullName?: string) => {
+      const { data, error } = await (type === "email"
+        ? supabase.auth.verifyOtp({ email: emailOrPhone, token, type: "email" })
+        : supabase.auth.verifyOtp({ phone: emailOrPhone, token, type: "sms" }));
+
+      if (!error && data.user) {
+        // If fullName is provided, ensure profile exists
+        if (fullName) {
+          const { error: profileError } = await supabase.from("profiles").upsert({
+            id: data.user.id,
+            email: data.user.email ?? emailOrPhone, // Handle phone case email
+            full_name: fullName,
+          }, { onConflict: 'id' });
+
+          if (profileError) {
+            console.error("[AuthContext] verifyOtp profile upsert error:", profileError.message);
+          }
+        }
+        await fetchProfile(data.user.id);
+      }
+      return { error };
+    },
+    [fetchProfile]
+  );
+
+  // ── Sign In with Google ────────────────────────────────────────────────────
+  const signInWithGoogle = useCallback(async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: window.location.origin,
+      }
+    });
+    return { error };
+  }, []);
+
   // ── Sign Up ────────────────────────────────────────────────────────────────
   const signUp = useCallback(
     async ({ email, password, fullName, phone, referralCode }: SignUpOptions) => {
@@ -185,6 +242,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoggedIn: !!user,
         isLoading,
         signIn,
+        signInWithOtp,
+        verifyOtp,
+        signInWithGoogle,
         signUp,
         signOut,
         refreshProfile,

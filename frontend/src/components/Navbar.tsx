@@ -189,11 +189,11 @@ const Navbar = () => {
                         Shortlist
                       </Link>
                       <Link
-                        to="/dashboard"
+                        to="/profile"
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
                       >
                         <Settings className="h-4 w-4 text-muted-foreground" />{" "}
-                        Profile Settings
+                        My Profile
                       </Link>
                       <div className="border-t">
                         <button

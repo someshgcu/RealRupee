@@ -1,23 +1,68 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { properties } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 import PropertyCard from "@/components/PropertyCard";
-import { Heart, Search } from "lucide-react";
+import { Heart, Search, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const MyShortlist = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
-  const [shortlisted] = useState(
-    properties.filter((p) => p.isValidated).slice(0, 4)
-  );
+  const { toast } = useToast();
+  const [shortlisted, setShortlisted] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchShortlist = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("shortlists")
+          .select(`
+            *,
+            properties (
+              *,
+              property_images (image_url)
+            )
+          `)
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+
+        // Flatten the data: extract property objects from shortlists
+        const flattened = (data || [])
+          .map((s: any) => s.properties)
+          .filter(Boolean);
+
+        setShortlisted(flattened);
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchShortlist();
+  }, [user, toast]);
 
   if (!isLoggedIn) return <Navigate to="/login" replace />;
 
   return (
     <div className="container mx-auto px-4 py-8">
       <h1 className="mb-6 text-2xl font-bold text-foreground">My Shortlist</h1>
-      {shortlisted.length === 0 ? (
+      {loading ? (
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : shortlisted.length === 0 ? (
         /* Elegant Empty State */
         <div className="flex flex-col items-center justify-center py-20">
           <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-muted/60">

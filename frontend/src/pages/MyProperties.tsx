@@ -1,25 +1,56 @@
+import { useState, useEffect } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { properties } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
 import PropertyCard from "@/components/PropertyCard";
-import { Home, Info, Plus } from "lucide-react";
+import { Home, Info, Plus, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { BackButton } from "@/components/BackButton";
 
 const MyProperties = () => {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [searchParams] = useSearchParams();
+  const [userProps, setUserProps] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!isLoggedIn) return <Navigate to="/login" replace />;
-
-  const userProps = properties.filter((p) => p.ownerId === "u1");
   const action = searchParams.get("action");
   const serviceName = searchParams.get("service");
   const isSelectMode = action === "selectForService";
 
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchMyProperties = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from("properties")
+          .select("*, property_images(image_url)")
+          .eq("seller_id", user.id)
+          .order("created_at", { ascending: false });
+
+        if (error) throw error;
+        setUserProps(data || []);
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error.message,
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMyProperties();
+  }, [user, toast]);
+
+  if (!isLoggedIn) return <Navigate to="/login" replace />;
+
   const handleSelectForService = (propertyId: string) => {
-    const property = properties.find((p) => p.id === propertyId);
+    const property = userProps.find((p) => p.id === propertyId);
     toast({
       title: "Property Selected",
       description: `"${property?.title}" selected for ${serviceName || "RealRupee service"}. Redirecting to payment...`,
@@ -48,7 +79,11 @@ const MyProperties = () => {
 
       <h1 className="mb-6 text-2xl font-bold text-foreground">My Properties</h1>
 
-      {userProps.length === 0 ? (
+      {loading ? (
+        <div className="flex h-64 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : userProps.length === 0 ? (
         /* Elegant Empty State */
         <div className="flex flex-col items-center justify-center py-20">
           <div className="mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-muted/60">

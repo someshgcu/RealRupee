@@ -35,6 +35,7 @@ import {
     Cctv,
     Youtube,
 } from "lucide-react";
+import { BackButton } from "@/components/BackButton";
 
 const amenityIconMap: Record<string, React.ElementType> = {
     "24 X 7 Security": ShieldCheck,
@@ -101,12 +102,7 @@ const PropertyDetails = () => {
         <div className="min-h-screen bg-background">
             {/* Back Navigation */}
             <div className="container mx-auto px-4 py-4">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                >
-                    <ArrowLeft className="h-4 w-4" /> Back
-                </button>
+                <BackButton />
             </div>
 
             {/* Media Gallery */}

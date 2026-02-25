@@ -1,6 +1,5 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { currentUser } from "@/data/mockData";
 import { Navigate } from "react-router-dom";
 import {
     ArrowLeft,
@@ -14,25 +13,26 @@ import {
     Twitter,
 } from "lucide-react";
 import { useState } from "react";
-
-const REFERRAL_LINK = "https://realrupee.com/referral/so1653";
+import { BackButton } from "@/components/BackButton";
 
 const MyCoins = () => {
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, profile } = useAuth();
     const navigate = useNavigate();
     const [copied, setCopied] = useState(false);
+
+    const dynamicReferralLink = `https://realrupee.com/referral/${profile?.referral_code || "pending"}`;
 
     if (!isLoggedIn) return <Navigate to="/login" replace />;
 
     const handleCopy = async () => {
         try {
-            await navigator.clipboard.writeText(REFERRAL_LINK);
+            await navigator.clipboard.writeText(dynamicReferralLink);
             setCopied(true);
             setTimeout(() => setCopied(false), 2000);
         } catch {
             // Fallback for older browsers
             const input = document.createElement("input");
-            input.value = REFERRAL_LINK;
+            input.value = dynamicReferralLink;
             document.body.appendChild(input);
             input.select();
             document.execCommand("copy");
@@ -42,18 +42,13 @@ const MyCoins = () => {
         }
     };
 
-    const shareWhatsApp = `https://api.whatsapp.com/send?text=Join%20RealRupee%20using%20my%20link:%20${encodeURIComponent(REFERRAL_LINK)}`;
-    const shareFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(REFERRAL_LINK)}`;
-    const shareTwitter = `https://twitter.com/intent/tweet?url=${encodeURIComponent(REFERRAL_LINK)}&text=Join%20RealRupee!`;
+    const shareWhatsApp = `https://api.whatsapp.com/send?text=Join%20RealRupee%20using%20my%20link:%20${encodeURIComponent(dynamicReferralLink)}`;
+    const shareFacebook = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(dynamicReferralLink)}`;
+    const shareTwitter = `https://twitter.com/intent/tweet?url=${encodeURIComponent(dynamicReferralLink)}&text=Join%20RealRupee!`;
 
     return (
         <div className="container mx-auto px-4 py-6">
-            <button
-                onClick={() => navigate(-1)}
-                className="mb-6 flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-                <ArrowLeft className="h-4 w-4" /> Back
-            </button>
+            <BackButton />
 
             {/* Hero / Balance Section */}
             <div className="mb-8 rounded-2xl bg-gradient-to-br from-[#1a4b8c] to-[#153d73] p-8 text-center text-white shadow-lg">
@@ -62,7 +57,7 @@ const MyCoins = () => {
                 </div>
                 <p className="text-lg font-medium text-white/80">Your Balance</p>
                 <p className="text-4xl font-extrabold">
-                    {currentUser.coins} <span className="text-xl font-semibold text-white/70">coins</span>
+                    {profile?.coins_balance || 0} <span className="text-xl font-semibold text-white/70">coins</span>
                 </p>
             </div>
 
@@ -139,7 +134,7 @@ const MyCoins = () => {
                 {/* Referral Link */}
                 <div className="mt-4 flex items-center gap-2 rounded-lg border bg-muted/50 p-3">
                     <p className="min-w-0 flex-1 truncate text-sm font-medium text-foreground">
-                        {REFERRAL_LINK}
+                        {dynamicReferralLink}
                     </p>
                     <button
                         onClick={handleCopy}

@@ -141,13 +141,12 @@ const BottomNav = () => {
               </button>
               <button
                 onClick={() => {
-                  navigate("/dashboard");
+                  navigate("/profile");
                   setAvatarOpen(false);
                 }}
                 className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-muted"
               >
-                <Settings className="h-4 w-4 text-muted-foreground" /> Profile
-                Settings
+                <Settings className="h-4 w-4 text-muted-foreground" /> My Profile
               </button>
               <div className="border-t pt-1">
                 <button

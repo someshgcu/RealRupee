@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { leadsAndEnquiries, properties } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 import {
     ArrowLeft,
     User,
@@ -10,12 +13,54 @@ import {
     Building2,
     MapPin,
     ExternalLink,
+    Loader2,
 } from "lucide-react";
 
 const LeadDetails = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const lead = leadsAndEnquiries.find((l) => l.id === id);
+    const { toast } = useToast();
+    const [lead, setLead] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchLeadDetails = async () => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from("leads_enquiries")
+                    .select(`
+                        *,
+                        properties (
+                            *,
+                            property_images (image_url)
+                        )
+                    `)
+                    .eq("id", id)
+                    .single();
+
+                if (error) throw error;
+                setLead(data);
+            } catch (error: any) {
+                console.error("Fetch lead error:", error);
+                // toast is handled by caller or we can show it here
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchLeadDetails();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!lead) {
         return (
@@ -37,7 +82,7 @@ const LeadDetails = () => {
         );
     }
 
-    const property = properties.find((p) => p.id === lead.propertyId);
+    const property = lead.properties;
 
     const statusColor =
         lead.status === "New"
@@ -95,7 +140,9 @@ const LeadDetails = () => {
                                 <Calendar className="h-4 w-4 text-muted-foreground" />
                                 <div>
                                     <p className="text-xs text-muted-foreground">Date Received</p>
-                                    <p className="text-sm font-medium text-foreground">{lead.date}</p>
+                                    <p className="text-sm font-medium text-foreground">
+                                        {format(new Date(lead.created_at), "dd MMM yyyy, HH:mm")}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -140,7 +187,7 @@ const LeadDetails = () => {
                                 Inquiring About
                             </h3>
                             <img
-                                src={property.imageUrl}
+                                src={property.property_images?.[0]?.image_url || "/placeholder.svg"}
                                 alt={property.title}
                                 className="mb-3 h-36 w-full rounded-lg object-cover"
                             />

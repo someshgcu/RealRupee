@@ -1,5 +1,8 @@
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { transactions } from "@/data/mockData";
+import { supabase } from "@/lib/supabase";
+import { useToast } from "@/hooks/use-toast";
+import { format } from "date-fns";
 import {
     ArrowLeft,
     Receipt,
@@ -14,12 +17,47 @@ import {
     CheckCircle2,
     Clock,
     XCircle,
+    Loader2,
 } from "lucide-react";
 
 const TransactionDetails = () => {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const tx = transactions.find((t) => t.id === id);
+    const { toast } = useToast();
+    const [tx, setTx] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchTransactionDetails = async () => {
+            setLoading(true);
+            try {
+                const { data, error } = await supabase
+                    .from("service_transactions")
+                    .select("*, properties(title)")
+                    .eq("id", id)
+                    .single();
+
+                if (error) throw error;
+                setTx(data);
+            } catch (error: any) {
+                console.error("Fetch transaction error:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchTransactionDetails();
+    }, [id]);
+
+    if (loading) {
+        return (
+            <div className="flex h-[60vh] items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            </div>
+        );
+    }
 
     if (!tx) {
         return (
@@ -41,7 +79,7 @@ const TransactionDetails = () => {
         );
     }
 
-    const isCredit = tx.type === "Credit";
+    const isCredit = tx.coin_amount > 0 && tx.status === "Success";
     const StatusIcon = tx.status === "Success" ? CheckCircle2 : tx.status === "Pending" ? Clock : XCircle;
     const statusColor =
         tx.status === "Success"
@@ -74,7 +112,7 @@ const TransactionDetails = () => {
                                 <ArrowUpRight className="h-7 w-7 text-[#fd7e14]" />
                             )}
                         </div>
-                        <h1 className="text-xl font-bold text-foreground">{tx.service}</h1>
+                        <h1 className="text-xl font-bold text-foreground">{tx.service_name}</h1>
                         <div className={`mt-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-sm font-semibold ${statusColor}`}>
                             <StatusIcon className="h-4 w-4" /> {tx.status}
                         </div>
@@ -83,7 +121,7 @@ const TransactionDetails = () => {
                     {/* Amount */}
                     <div className="border-b p-6 text-center">
                         <p className={`text-3xl font-bold ${isCredit ? "text-[#28a745]" : "text-foreground"}`}>
-                            {isCredit ? "+" : "-"}{tx.coinAmount} Coins
+                            {tx.coin_amount >= 0 ? "+" : ""}{tx.coin_amount} Coins
                         </p>
                         {tx.amount > 0 && (
                             <p className="mt-1 text-lg text-muted-foreground">
@@ -105,33 +143,37 @@ const TransactionDetails = () => {
                             <Calendar className="h-4 w-4 text-muted-foreground" />
                             <div className="flex-1">
                                 <p className="text-xs text-muted-foreground">Date</p>
-                                <p className="text-sm font-medium text-foreground">{tx.date}</p>
+                                <p className="text-sm font-medium text-foreground">
+                                    {format(new Date(tx.created_at), "dd MMM yyyy, HH:mm")}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 px-6 py-4">
                             <Coins className="h-4 w-4 text-muted-foreground" />
                             <div className="flex-1">
                                 <p className="text-xs text-muted-foreground">Type</p>
-                                <p className="text-sm font-medium text-foreground">{tx.type}</p>
+                                <p className="text-sm font-medium text-foreground">
+                                    {tx.coin_amount >= 0 ? "Credit" : "Debit"}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-3 px-6 py-4">
                             <CreditCard className="h-4 w-4 text-muted-foreground" />
                             <div className="flex-1">
                                 <p className="text-xs text-muted-foreground">Payment Method</p>
-                                <p className="text-sm font-medium text-foreground">{tx.method}</p>
+                                <p className="text-sm font-medium text-foreground">{tx.payment_method || "N/A"}</p>
                             </div>
                         </div>
-                        {tx.relatedPropertyTitle && (
+                        {tx.properties && (
                             <div className="flex items-center gap-3 px-6 py-4">
                                 <Building2 className="h-4 w-4 text-muted-foreground" />
                                 <div className="flex-1">
                                     <p className="text-xs text-muted-foreground">Related Property</p>
                                     <Link
-                                        to={`/properties/${tx.relatedPropertyId}`}
+                                        to={`/properties/${tx.property_id}`}
                                         className="text-sm font-medium text-[#1a4b8c] hover:underline"
                                     >
-                                        {tx.relatedPropertyTitle}{" "}
+                                        {tx.properties.title}{" "}
                                         <ExternalLink className="inline h-3 w-3" />
                                     </Link>
                                 </div>
