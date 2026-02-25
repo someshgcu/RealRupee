@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 const Navbar = () => {
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [cityOpen, setCityOpen] = useState(false);
@@ -60,8 +60,8 @@ const Navbar = () => {
     setAvatarOpen(false);
   };
 
-  const confirmSignout = () => {
-    logout();
+  const confirmSignout = async () => {
+    await signOut();
     setShowSignoutConfirm(false);
     navigate("/");
   };
@@ -155,16 +155,16 @@ const Navbar = () => {
                     onClick={() => setAvatarOpen(!avatarOpen)}
                     className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground"
                   >
-                    {user?.name.charAt(0)}
+                    {profile?.full_name?.charAt(0) ?? "U"}
                   </button>
                   {avatarOpen && (
                     <div className="absolute right-0 top-full mt-2 w-56 rounded-lg border bg-card py-1 shadow-lg">
                       <div className="border-b px-4 py-3">
                         <p className="text-sm font-medium text-foreground">
-                          {user?.name}
+                          {profile?.full_name}
                         </p>
                         <p className="text-xs text-muted-foreground">
-                          {user?.email}
+                          {profile?.email}
                         </p>
                       </div>
                       <Link

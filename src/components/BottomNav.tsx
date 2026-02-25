@@ -20,7 +20,7 @@ import { cities } from "@/data/mockData";
 const BottomNav = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isLoggedIn, user, logout } = useAuth();
+  const { isLoggedIn, profile, signOut } = useAuth();
   const [cityOpen, setCityOpen] = useState(false);
   const [selectedCity, setSelectedCity] = useState("Mumbai");
   const [avatarOpen, setAvatarOpen] = useState(false);
@@ -31,8 +31,8 @@ const BottomNav = () => {
     setShowSignoutConfirm(true);
   };
 
-  const confirmSignout = () => {
-    logout();
+  const confirmSignout = async () => {
+    await signOut();
     setShowSignoutConfirm(false);
     navigate("/");
   };
@@ -99,13 +99,13 @@ const BottomNav = () => {
           <div className="absolute bottom-full left-0 right-0 border-t bg-card px-4 py-3 shadow-lg">
             <div className="mb-3 flex items-center gap-3 border-b pb-3">
               <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground">
-                {user?.name.charAt(0)}
+                {profile?.full_name?.charAt(0) ?? "U"}
               </div>
               <div>
                 <p className="text-sm font-medium text-foreground">
-                  {user?.name}
+                  {profile?.full_name}
                 </p>
-                <p className="text-xs text-muted-foreground">{user?.email}</p>
+                <p className="text-xs text-muted-foreground">{profile?.email}</p>
               </div>
             </div>
             <div className="space-y-1">
@@ -180,7 +180,7 @@ const BottomNav = () => {
               >
                 {isAvatarTab ? (
                   <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
-                    {user?.name.charAt(0)}
+                    {profile?.full_name?.charAt(0) ?? "U"}
                   </div>
                 ) : (
                   tab.icon && <tab.icon className="h-5 w-5" />
